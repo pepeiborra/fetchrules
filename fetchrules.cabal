@@ -1,0 +1,12 @@
+name:                fetchrules
+version:             0.2
+synopsis:            <Project description>
+description:         <Project description>
+category:            Language
+license:             AllRightsReserved
+license-file:        LICENSE
+author:              pepe
+maintainer:          mnislaih@gmail.com
+build-Depends:       base, TRS >= 0.12, TTTParser, TRSParser, OBJParser, parsec, mtl, alacarte, filepath
+ghc-options:         
+exposed-modules:     TRS.FetchRules
