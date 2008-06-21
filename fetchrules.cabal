@@ -7,6 +7,6 @@ license:             AllRightsReserved
 license-file:        LICENSE
 author:              pepe
 maintainer:          mnislaih@gmail.com
-build-Depends:       base, TRS >= 0.12, TTTParser, TRSParser, OBJParser, parsec, mtl, alacarte, filepath
+build-Depends:       base, TRS >= 0.13, TTTParser, TRSParser, OBJParser, parsec < 3.0, mtl, alacarte, filepath
 ghc-options:         
 exposed-modules:     TRS.FetchRules
