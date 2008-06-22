@@ -102,12 +102,12 @@ class FetchRules program term | program -> term, term -> program where
 
 instance FetchRules OBJProgram TermD where
   fetchRules (Obj _ _ _ obj_vars obj_eqs) = map fromOBJEq obj_eqs
-      where fromOBJTerm (OBJ.Var sym) | Just i <- elemIndex sym vars = var i
+      where fromOBJTerm (OBJ.Var sym) | Just i <- elemIndex sym vars = varLabeled sym i
             fromOBJTerm (Call f tt) = term f (map fromOBJTerm tt) 
             vars = [ name | (name,_sort) <- obj_vars ]
             fromOBJEq (Eq t1 t2) = fromOBJTerm t1 :-> fromOBJTerm t2
   fetchTerm_ (Obj _ _ _ obj_vars _obj_eqs) = fromOBJTerm
-      where fromOBJTerm (OBJ.Var sym) | Just i <- elemIndex sym vars = var i
+      where fromOBJTerm (OBJ.Var sym) | Just i <- elemIndex sym vars = varLabeled sym i
             fromOBJTerm (Call f tt) = term f (map fromOBJTerm tt) 
             vars = [ name | (name,_sort) <- obj_vars ]
             fromOBJEq (Eq t1 t2) = fromOBJTerm t1 :-> fromOBJTerm t2
@@ -115,7 +115,7 @@ instance FetchRules OBJProgram TermD where
 instance FetchRules TTT.TRS TTT.Term where
   fetchRules rr = fmap fetchRule rr
    where fetchRule (lhs TTT.:-> rhs) = fromTerm lhs :-> fromTerm rhs
-         fromTerm (TTT.V n) | Just i <- elemIndex n all_vars = var i
+         fromTerm (TTT.V n) | Just i <- elemIndex n all_vars = varLabeled n i
          fromTerm (TTT.V n) = error$ n ++  " not a Variable: perhaps you forgot to add () after a constant?"
          fromTerm (TTT.F n tt) = term n (map fromTerm tt)
          vars t = nub [ n | TTT.V n <- listify isTTTVar t]
@@ -126,7 +126,7 @@ instance FetchRules TTT.TRS TTT.Term where
   needProgramToFetchTerm _ = False
 
 termTTT t = fromTerm t where
-         fromTerm (TTT.V n) | Just i <- elemIndex n all_vars = var i
+         fromTerm (TTT.V n) | Just i <- elemIndex n all_vars = varLabeled n i
          fromTerm (TTT.F n tt) = term n (map fromTerm tt)
          all_vars = nub [ n | TTT.V n <- listify isTTTVar t]
          isTTTVar TTT.V{} = True
@@ -137,11 +137,11 @@ instance FetchRules TRST.Spec TRST.Term where
    where f (lhs TRST.:-> rhs) = [mkTerm lhs :-> mkTerm rhs]
          vars = concat [v | TRST.Var v <- decls]
          mkTerm (TRST.T id tt) 
-             | Just i <- id `elemIndex` vars = var i
+             | Just i <- id `elemIndex` vars = varLabeled id i
              | otherwise      = term id (mkTerm `map` tt)
   fetchTerm_ (TRST.Spec decls) = mkTerm
    where vars = concat [v | TRST.Var v <- decls]
          mkTerm (TRST.T id tt) 
-             | Just i <- id `elemIndex` vars = var i
+             | Just i <- id `elemIndex` vars = varLabeled id i
              | otherwise      = term id (mkTerm `map` tt)
 
