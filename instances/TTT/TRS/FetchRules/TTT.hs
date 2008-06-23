@@ -8,6 +8,7 @@ import TRS
 import TRS.FetchRules
 import qualified TTTParser as TTT
 
+tttParser = proxy :: Proxy TTT.TRS
 
 instance ParseProgram TTT.TRS TTT.Term () where
    grammar _ = "ttt"

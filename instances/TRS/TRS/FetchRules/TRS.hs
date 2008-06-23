@@ -8,6 +8,7 @@ import TRS.FetchRules
 import qualified TRSTypes as TRST
 import qualified TRSParser as TRSP
 
+trsParser = proxy :: TRST.Spec
 
 instance ParseProgram  TRST.Spec TRST.Term () where
    grammar _ = "trs"

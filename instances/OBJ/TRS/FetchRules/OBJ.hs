@@ -8,6 +8,8 @@ import TRS
 import TRS.FetchRules
 import OBJ_parser as OBJ (OBJProgram(..), Term(..), EqD(..), TermD, St,object,anyTerm)
 
+objParser = proxy :: Proxy OBJProgram
+
 instance ParseProgram OBJProgram TermD OBJ.St where
    grammar _ = "maude"
    programP  = OBJ.object
