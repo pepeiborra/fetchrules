@@ -1,0 +1,12 @@
+name:                fetchrules-obj
+version:             0.1
+synopsis:            
+description:         FetchRules Instances for the OBJ parser
+category:            Language
+license:             AllRightsReserved
+license-file:        LICENSE
+author:              pepe iborra
+maintainer:          mnislaih@gmail.com
+build-Depends:       base, TRS >= 0.13, fetchrules, OBJParser, mtl
+ghc-options:         
+exposed-modules:     TRS.FetchRules.OBJ

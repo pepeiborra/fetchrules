@@ -1,0 +1,11 @@
+name:                fetchrules-auto
+version:             0.1
+synopsis:            This package provides auto parsing functionality from different individual parsers for the TRS package
+category:            Language
+license:             AllRightsReserved
+license-file:        LICENSE
+author:              pepe iborra
+maintainer:          mnislaih@gmail.com
+build-Depends:       base, TRS >= 0.13, fetchrules, mtl, alacarte, parsec < 3.0, filepath
+ghc-options:         
+exposed-modules:     TRS.FetchRules.Auto
