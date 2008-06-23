@@ -1,5 +1,5 @@
 {-# LANGUAGE FlexibleContexts, TypeOperators, PolymorphicComponents, GADTs #-}
-module TRS.FetchRules.Auto (SomeParser(..), parseFile, parseFileAndTerms) where
+module TRS.FetchRules.Auto (SomeParser(..), parseFileAuto, parseFileAndTermsAuto) where
 
 import Control.Applicative
 import Control.Monad.Error
@@ -20,16 +20,16 @@ parsers = [SomeParser (proxy :: Proxy TTT.TRS)
           ,SomeParser (proxy :: Proxy OBJProgram)
           ,SomeParser (proxy :: Proxy TRST.Spec)]
 -}
-parseFile :: (Var :<: t, T String :<: t) =>
+parseFileAuto :: (Var :<: t, T String :<: t) =>
              [SomeParser] -> FilePath -> String -> Either ParseError [Rule t]
-parseFile parsers fn contents = msum(map tryParser guessedParsers) `mplus`
+parseFileAuto parsers fn contents = msum(map tryParser guessedParsers) `mplus`
                    tryParser (head guessedParsers)  -- For error displaying
     where tryParser (SomeParser p) = fmap fetchRules (parseP p fn contents)
           guessedParsers = sortParsers parsers fn
 
-parseFileAndTerms :: (Var :<: t, T String :<: t) =>
+parseFileAndTermsAuto :: (Var :<: t, T String :<: t) =>
              [SomeParser] -> FilePath -> String -> [String] -> Either ParseError ([Rule t ], [TRS.Term t])
-parseFileAndTerms parsers fn contents terms =
+parseFileAndTermsAuto parsers fn contents terms =
            msum(map tryParser guessedParsers) `mplus`
            tryParser (head guessedParsers)  -- For error displaying
     where tryParser (SomeParser p) = do
@@ -51,5 +51,3 @@ parseT _ = parse TRS.FetchRules.termP
 
 parse p = runParser p mempty
 
-
-instance Error ParseError

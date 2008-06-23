@@ -1,19 +1,40 @@
-{-# LANGUAGE MultiParamTypeClasses, FunctionalDependencies, FlexibleContexts #-}
-module TRS.FetchRules (ParseProgram(..), FetchRules(..), Proxy, proxy, FullProgram) where
+{-# LANGUAGE MultiParamTypeClasses, FunctionalDependencies, FlexibleContexts, PolymorphicComponents, KindSignatures #-}
+module TRS.FetchRules (parseFile, parseFileAndTerms, ParseProgram(..), FetchRules(..), Proxy, proxy, FullProgram) where
 
+import Control.Monad.Error
 import Data.AlaCarte
 import Data.Monoid
-import Text.ParserCombinators.Parsec (GenParser)
+import Text.ParserCombinators.Parsec (GenParser, runParser, ParseError)
 
 import TRS
 
+parseFile :: (Var :<: t, T String :<: t, ParseProgram program term s, FetchRules program term) =>
+             Proxy program -> FilePath -> String -> Either ParseError [Rule t]
+
+parseFile p fn contents = fetchRules `fmap` parseP p fn contents
+
+
+parseFileAndTerms :: (Var :<: t, T String :<: t, ParseProgram program term s, FetchRules program term) =>
+             Proxy program -> FilePath -> String -> [String] -> Either ParseError ([Rule t], [Term t])
+
+parseFileAndTerms  p fn contents terms = do
+            program <- parseP p fn contents
+            terms   <- mapM (parseT p contents) terms
+            return (fetchRules program, fetchTerm_ program `fmap` terms)
+
+parseP :: ParseProgram program t s => Proxy program -> (FilePath -> FullProgram -> Either ParseError program)
+parseP _ = runParser programP mempty
+
+parseT :: ParseProgram p t s => Proxy p -> (FullProgram -> String -> Either ParseError t)
+parseT _ = runParser termP mempty
+
 type FullProgram = String
 
-class Monoid s => ParseProgram program term s | program -> term s
-                                              , term    -> program s
+class Monoid st => ParseProgram program term st | program -> term st
+                                              , term    -> program st
  where   grammar  :: Proxy program  -> String
-         programP :: GenParser Char s program
-         termP    :: GenParser Char s term
+         programP :: GenParser Char st program
+         termP    :: GenParser Char st term
          needsProgramToParseTerm :: Proxy program -> Bool
 
 class FetchRules program term | program -> term, term -> program where
@@ -29,3 +50,5 @@ class FetchRules program term | program -> term, term -> program where
 
 type Proxy a = a
 proxy = undefined :: Proxy a
+
+instance Error ParseError
