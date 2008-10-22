@@ -8,14 +8,14 @@ import Text.ParserCombinators.Parsec (GenParser, runParser, ParseError)
 
 import TRS
 
-parseFile :: (Var :<: t, T String :<: t, ParseProgram program term s, FetchRules program term) =>
+parseFile :: (Var :<: t, T String :<: t, ParseProgram program term st, FetchRules program term) =>
              Proxy program -> FilePath -> String -> Either ParseError [Rule t]
 
 parseFile p fn contents = fetchRules `fmap` parseP p fn contents
 
 
-parseFileAndTerms :: (Var :<: t, T String :<: t, ParseProgram program term s, FetchRules program term) =>
-             Proxy program -> FilePath -> String -> [String] -> Either ParseError ([Rule t], [Term t])
+parseFileAndTerms :: (Var :<: t, T String :<: t, Var :<: u, T String :<: u, ParseProgram program term s, FetchRules program term) =>
+             Proxy program -> FilePath -> String -> [String] -> Either ParseError ([Rule t], [Term u])
 
 parseFileAndTerms  p fn contents terms = do
             program <- parseP p fn contents
