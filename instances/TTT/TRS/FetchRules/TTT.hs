@@ -1,4 +1,4 @@
-{-# LANGUAGE MultiParamTypeClasses, PatternGuards, PatternSignatures #-}
+{-# LANGUAGE MultiParamTypeClasses, PatternGuards, ScopedTypeVariables, PatternSignatures #-}
 {-# LANGUAGE FlexibleInstances, FlexibleContexts, TypeSynonymInstances #-}
 module TRS.FetchRules.TTT where
 

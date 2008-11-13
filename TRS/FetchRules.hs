@@ -2,19 +2,18 @@
 module TRS.FetchRules (parseFile, parseFileAndTerms, ParseProgram(..), FetchRules(..), Proxy, proxy, FullProgram) where
 
 import Control.Monad.Error
-import Data.AlaCarte
 import Data.Monoid
 import Text.ParserCombinators.Parsec (GenParser, runParser, ParseError)
 
 import TRS
 
-parseFile :: (Var :<: t, T String :<: t, ParseProgram program term st, FetchRules program term) =>
+parseFile :: (Var :<: t, T String :<: t, HashConsed t, ParseProgram program term st, FetchRules program term) =>
              Proxy program -> FilePath -> String -> Either ParseError [Rule t]
 
 parseFile p fn contents = fetchRules `fmap` parseP p fn contents
 
 
-parseFileAndTerms :: (Var :<: t, T String :<: t, Var :<: u, T String :<: u, ParseProgram program term s, FetchRules program term) =>
+parseFileAndTerms :: (Var :<: t, T String :<: t, HashConsed t, Var :<: u, T String :<: u, HashConsed u, ParseProgram program term s, FetchRules program term) =>
              Proxy program -> FilePath -> String -> [String] -> Either ParseError ([Rule t], [Term u])
 
 parseFileAndTerms  p fn contents terms = do
@@ -38,12 +37,12 @@ class Monoid st => ParseProgram program term st | program -> term st
          needsProgramToParseTerm :: Proxy program -> Bool
 
 class FetchRules program term | program -> term, term -> program where
-  fetchRules :: (Var :<: t, T String:<: t) => program -> [Rule t]
-  fetchTerm_ :: (Var :<: t, T String :<: t) => program -> term -> TRS.Term t
+  fetchRules :: (Var :<: t, T String:<: t, HashConsed t) => program -> [Rule t]
+  fetchTerm_ :: (Var :<: t, T String :<: t, HashConsed t) => program -> term -> TRS.Term t
   fetchTerm_ _ = fetchTerm
   needProgramToFetchTerm   :: Proxy program -> Bool
   needProgramToFetchTerm _ = True
-  fetchTerm  ::  (Var :<: t, T String :<: t) => term -> TRS.Term t
+  fetchTerm  ::  (Var :<: t, T String :<: t,HashConsed t) => term -> TRS.Term t
   fetchTerm  = error "Use fetchTerm_ for this parser"
 
 

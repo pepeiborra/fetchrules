@@ -24,14 +24,14 @@ parsers = [SomeParser (proxy :: Proxy TTT.TRS)
           ,SomeParser (proxy :: Proxy OBJProgram)
           ,SomeParser (proxy :: Proxy TRST.Spec)]
 -}
-parseFileAuto :: (Var :<: t, T String :<: t) =>
+parseFileAuto :: (Var :<: t, T String :<: t, HashConsed t) =>
              [SomeParser] -> FilePath -> String -> Either [ParseError] [Rule t]
 parseFileAuto parsers fn contents = mapError atom (msum attempts) `mplus` throwError [err | Left err <- attempts]
     where attempts = map tryParser guessedParsers
           tryParser (SomeParser p) = fmap fetchRules (parseP p fn contents)
           guessedParsers = sortParsers parsers fn
 
-parseFileAndTermsAuto :: (Var :<: t, T String :<: t, Var :<: u, T String :<: u) =>
+parseFileAndTermsAuto :: (Var :<: t, T String :<: t, HashConsed t, Var :<: u, T String :<: u, HashConsed u) =>
              [SomeParser] -> FilePath -> String -> [String] -> Either [ParseError] ([Rule t ], [TRS.Term u])
 parseFileAndTermsAuto parsers fn contents terms =
            mapError atom (msum attempts) `mplus` throwError [err | Left err <- attempts]
