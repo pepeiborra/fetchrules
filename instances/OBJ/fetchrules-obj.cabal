@@ -7,6 +7,6 @@ license:             AllRightsReserved
 license-file:        LICENSE
 author:              pepe iborra
 maintainer:          mnislaih@gmail.com
-build-Depends:       base, TRS >= 0.13, fetchrules, OBJParser, mtl
+build-Depends:       base, TRS >= 0.13, fetchrules, OBJParser, syb
 ghc-options:         
 exposed-modules:     TRS.FetchRules.OBJ

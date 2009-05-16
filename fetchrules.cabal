@@ -7,6 +7,6 @@ license:             AllRightsReserved
 license-file:        LICENSE
 author:              pepe iborra
 maintainer:          mnislaih@gmail.com
-build-Depends:       base, TRS >= 0.17, parsec < 3.0, mtl, alacarte
+build-Depends:       base, TRS >= 0.17, parsec < 3.0, monads-fd
 ghc-options:         
 exposed-modules:     TRS.FetchRules

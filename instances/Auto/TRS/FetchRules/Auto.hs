@@ -2,7 +2,9 @@
 module TRS.FetchRules.Auto (SomeParser(..), parseFileAuto, parseFileAndTermsAuto, mapError, bestError) where
 
 import Control.Applicative
+import Control.Monad
 import Control.Monad.Error
+import Control.Monad.Trans.Error (ErrorList)
 import Data.AlaCarte
 import Data.List (elemIndex, nub, partition, maximumBy)
 import Data.Monoid
@@ -12,12 +14,10 @@ import Text.ParserCombinators.Parsec.Error
 import TRS
 import TRS.FetchRules
 
-instance Error a => Error [a] where
-  noMsg    = [noMsg]
-  strMsg t = [strMsg t]
-
 data SomeParser where
   SomeParser ::  forall p t s. (ParseProgram p t s, FetchRules p t) => Proxy p -> SomeParser
+
+instance ErrorList ParseError
 
 {- | We use an existential wrapper packaged with constraints to build the list of parsrs
 parsers = [SomeParser (proxy :: Proxy TTT.TRS)
