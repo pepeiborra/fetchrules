@@ -20,4 +20,4 @@ Library
     build-depends: base
 
   ghc-options:         
-  exposed-modules:     TRS.FetchRules.ONJ
+  exposed-modules:     TRS.FetchRules.OBJ
