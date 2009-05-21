@@ -7,6 +7,16 @@ license:             AllRightsReserved
 license-file:        LICENSE
 author:              pepe iborra
 maintainer:          mnislaih@gmail.com
-build-Depends:       base, TRS >= 0.13, fetchrules, TRSParser, syb, transformers
-ghc-options:         
-exposed-modules:     TRS.FetchRules.TRS
+
+Flag base4
+   default: True
+      
+Library
+  build-Depends:   TRS >= 0.13, fetchrules, TRSParser, transformers
+  if flag(base4)  
+    build-depends: base >= 4, syb
+  else 
+    build-depends: base
+
+  ghc-options:         
+  exposed-modules:     TRS.FetchRules.TRS
