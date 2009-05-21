@@ -11,13 +11,19 @@ maintainer:          mnislaih@gmail.com
 
 Flag base4
    default: True
+Flag transformers
+   default: False
       
 Library
-  build-Depends:   TRS >= 0.13, fetchrules, OBJParser, transformers
+  build-Depends:   TRS >= 0.13, fetchrules, OBJParser
   if flag(base4)  
     build-depends: base >= 4, syb
   else 
     build-depends: base
+  if flag(transformers)
+     build-depends: transformers
+  else
+     build-depends: mtl
 
   ghc-options:         
   exposed-modules:     TRS.FetchRules.OBJ

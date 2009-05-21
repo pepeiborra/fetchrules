@@ -6,6 +6,16 @@ license:             AllRightsReserved
 license-file:        LICENSE
 author:              pepe iborra
 maintainer:          mnislaih@gmail.com
-build-Depends:       base, TRS >= 0.13, fetchrules, monads-fd, transformers, alacarte, parsec < 3.0, filepath
-ghc-options:         
-exposed-modules:     TRS.FetchRules.Auto
+build-Depends:       
+
+Flag transformers
+   default: False
+      
+Library
+  build-Depends: base, TRS >= 0.13, fetchrules, alacarte, parsec < 3.0, filepath, transformers
+  if flag(transformers)
+     build-depends: monads-fd
+  else
+     build-depends: mtl
+  ghc-options:         
+  exposed-modules:     TRS.FetchRules.Auto
