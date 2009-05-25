@@ -1,5 +1,6 @@
 {-# LANGUAGE MultiParamTypeClasses, FunctionalDependencies, FlexibleContexts, PolymorphicComponents, KindSignatures #-}
-module TRS.FetchRules (parseFile, parseFileAndTerms, ParseProgram(..), FetchRules(..), Proxy, proxy, FullProgram) where
+module TRS.FetchRules (parseFile, parseFileAndTerms, parseP, parseT,
+                       ParseProgram(..), FetchRules(..), Proxy, proxy, FullProgram) where
 
 import Control.Monad.Error
 import Data.Monoid
