@@ -1,4 +1,6 @@
 name:                fetchrules-ttt
+cabal-version:       >= 1.2
+build-type:          Simple
 version:             0.1
 synopsis:            This package provides a bridge between the TRS package and parsers
 description:         Instances for the TTT parser
@@ -13,11 +15,9 @@ Flag base4
    default: True
       
 Library
-  build-Depends:   TRS >= 0.13, fetchrules, TTTParser, transformers
+  build-Depends:   TRS >= 0.13, fetchrules, TTTParser
+  exposed-modules:     TRS.FetchRules.TTT
   if flag(base4)  
     build-depends: base >= 4, syb
   else 
     build-depends: base
-
-  ghc-options:         
-  exposed-modules:     TRS.FetchRules.TTT

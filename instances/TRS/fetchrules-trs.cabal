@@ -1,5 +1,7 @@
 name:                fetchrules-trs
 version:             0.1
+cabal-version:       >= 1.2
+build-type:          Simple
 synopsis:            
 description:         Instances for the TRS parser
 category:            Language
@@ -9,20 +11,13 @@ author:              pepe iborra
 maintainer:          mnislaih@gmail.com
 
 Flag base4
-   default: True
-Flag transformers
-   default: False
-      
+   default: True      
+
 Library
+  exposed-modules:     TRS.FetchRules.TRS
   build-Depends:   TRS >= 0.13, fetchrules, TRSParser
   if flag(base4)  
     build-depends: base >= 4, syb
   else 
     build-depends: base
-  if flag(transformers)
-     build-depends: transformers
-  else
-     build-depends: mtl
 
-  ghc-options:         
-  exposed-modules:     TRS.FetchRules.TRS

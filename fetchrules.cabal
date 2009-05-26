@@ -1,5 +1,5 @@
 name:                fetchrules
-version:             0.2
+version:             0.3
 synopsis:            This package provides a bridge between the TRS package and parsers
 description:         This package provides a bridge between the TRS package and parsers
 category:            Language
@@ -7,6 +7,6 @@ license:             AllRightsReserved
 license-file:        LICENSE
 author:              pepe iborra
 maintainer:          mnislaih@gmail.com
-build-Depends:       base, TRS >= 0.17, parsec < 3.0, mtl
+build-Depends:       base, TRS >= 0.17, parsec < 3.0
 ghc-options:         
 exposed-modules:     TRS.FetchRules

@@ -1,54 +1,45 @@
-{-# LANGUAGE MultiParamTypeClasses, FunctionalDependencies, FlexibleContexts, PolymorphicComponents, KindSignatures #-}
-module TRS.FetchRules (parseFile, parseFileAndTerms, parseP, parseT,
-                       ParseProgram(..), FetchRules(..), Proxy, proxy, FullProgram) where
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE FunctionalDependencies #-}
+{-# LANGUAGE FlexibleInstances, FlexibleContexts #-}
 
-import Control.Monad.Error
+module TRS.FetchRules (parseFile, ParseProgram(..), Proxy, proxy) where
+
 import Data.Monoid
 import Text.ParserCombinators.Parsec (GenParser, runParser, ParseError)
 
 import TRS
 
-parseFile :: (Var :<: t, T String :<: t, HashConsed t, ParseProgram program term st, FetchRules program term) =>
-             Proxy program -> FilePath -> String -> Either ParseError [Rule t]
-
-parseFile p fn contents = fetchRules `fmap` parseP p fn contents
-
-
-parseFileAndTerms :: (Var :<: t, T String :<: t, HashConsed t, Var :<: u, T String :<: u, HashConsed u, ParseProgram program term s, FetchRules program term) =>
-             Proxy program -> FilePath -> String -> [String] -> Either ParseError ([Rule t], [Term u])
-
-parseFileAndTerms  p fn contents terms = do
-            program <- parseP p fn contents
-            terms   <- mapM (parseT p contents) terms
-            return (fetchRules program, fetchTerm_ program `fmap` terms)
-
-parseP :: ParseProgram program t s => Proxy program -> (FilePath -> FullProgram -> Either ParseError program)
-parseP _ = runParser programP mempty
-
-parseT :: ParseProgram p t s => Proxy p -> (FullProgram -> String -> Either ParseError t)
-parseT _ = runParser termP mempty
+parseFile :: (ParseProgram p st f) =>
+             Proxy p -> FilePath -> String -> Either ParseError [Rule f]
+parseFile proxy_p fn txt = fst `fmap` ei_res where
+    ei_res         = runParser programP mempty fn txt
+    ~(Right (_,p)) = ei_res
+    types          = proxy' p `asTypeOf` proxy_p
 
 type FullProgram = String
 
-class Monoid st => ParseProgram program term st | program -> term st
-                                              , term    -> program st
- where   grammar  :: Proxy program  -> String
-         programP :: GenParser Char st program
-         termP    :: GenParser Char st term
-         needsProgramToParseTerm :: Proxy program -> Bool
+class Monoid st => ParseProgram p st f | p -> st where
+   extension         :: Proxy p -> String
+   programP          :: GenParser Char st ([Rule f], p)
+   termP             :: p -> GenParser Char st (Term f)
+   parseFileAndTerms :: Proxy p -> FilePath -> String -> [String] -> Either ParseError ([Rule f], [Term f])
+   parseFileAndTerms p_proxy fn contents terms = toEither $ do
+            (program,p) <- fromEither $ runParser programP mempty fn contents
+            let typ = proxy' p `asTypeOf` p_proxy
+            terms   <- mapM (fromEither . runParser (termP p) mempty "<term>") terms
+            return (program, terms)
 
-class FetchRules program term | program -> term, term -> program where
-  fetchRules :: (Var :<: t, T String:<: t, HashConsed t) => program -> [Rule t]
-  fetchTerm_ :: (Var :<: t, T String :<: t, HashConsed t) => program -> term -> TRS.Term t
-  fetchTerm_ _ = fetchTerm
-  needProgramToFetchTerm   :: Proxy program -> Bool
-  needProgramToFetchTerm _ = True
-  fetchTerm  ::  (Var :<: t, T String :<: t,HashConsed t) => term -> TRS.Term t
-  fetchTerm  = error "Use fetchTerm_ for this parser"
+data MyEither l r = L l | R r
+fromEither = either L R
+toEither (L l) = Left l; toEither (R r) = Right r
 
+instance Monad (MyEither ParseError) where
+  return = R
+  L a >>= f = L a
+  R r >>= f = f r
 
-
-type Proxy a = a
+type Proxy p = p
 proxy = undefined :: Proxy a
 
-instance Error ParseError
+proxy' :: p -> Proxy p
+proxy' _ = proxy
